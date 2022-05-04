@@ -5,28 +5,27 @@
 
 Clone the project
 
-bash
+```bash
   git clone https://link-to-project
-
+```
 
 Go to the project directory
 
-bash
+```bash
   cd my-project
-
+```
 
 Install dependencies
 
-bash
+```bash
   npm run install-dev
-
+```
 
 Start the server
 
-bash
+```bash
   npm run dev
-
-
+```
 
 ## Dependencies
 
