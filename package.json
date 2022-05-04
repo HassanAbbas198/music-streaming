@@ -1,0 +1,38 @@
+{
+    "name": "music-streaming",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "dependencies": {
+        "axios": "^0.26.1",
+        "body-parser": "^1.19.0",
+        "compression": "^1.7.4",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.0",
+        "express": "^4.16.4",
+        "helmet": "^5.0.2",
+        "joi": "^14.3.1",
+        "jsonwebtoken": "^8.5.1",
+        "lodash": "^4.17.15",
+        "moment": "^2.24.0",
+        "mongoose": "^5.13.14",
+        "nodemon": "^2.0.15",
+        "response-time": "^2.3.2",
+        "winston": "^3.2.1"
+    },
+    "devDependencies": {
+        "eslint": "^8.11.0",
+        "eslint-config-airbnb-base": "^15.0.0",
+        "eslint-plugin-import": "^2.25.4"
+    },
+    "scripts": {
+        "clean": "rm -rf node_modules dist package-lock.json",
+        "dev": "nodemon",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "install-dev": "npm run clean && npm i",
+        "install-prod": "npm run clean && npm i --production",
+        "lint": "eslint src/*.js --fix"
+    },
+    "author": "Hassan Abbas",
+    "license": "ISC"
+}
