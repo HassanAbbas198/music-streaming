@@ -1,0 +1,22 @@
+{
+  "env": {
+    "node": true
+  },
+  "extends": "airbnb-base",
+  "rules": {
+    "max-len": [
+      "error",
+      {
+        "code": 140
+      }
+    ],
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
+    "no-underscore-dangle": "error",
+    "no-console": "error",
+    "no-multi-spaces": "error",
+    "class-methods-use-this": "off"
+  }
+}
