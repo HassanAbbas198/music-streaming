@@ -3,10 +3,8 @@ function errorMiddleware(error, req, res, next) { // eslint-disable-line no-unus
     res.status(400).json(error.errors);
   } else {
     const status = error.status || 500;
-    const responseBody = {
-      message: error.message || 'Something went wrong'
-    };
-    res.status(status).send(responseBody);
+    const response = error.message || { error: true, message: 'Something went wrong' };
+    res.status(status).send(response);
   }
 }
 
