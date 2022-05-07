@@ -28,8 +28,24 @@ class Controller {
     }
   }
 
+  async login(req, res, next) {
+    try {
+      const result = await userService.login(req.body);
+      res.send(result);
+    } catch (e) {
+      if (e.message === 'wrongCredentials') {
+        next(new UserException(401, e.message));
+      } else if (e.message === 'locked') {
+        next(new UserException(403, e.message));
+      } else {
+        next(new UserException(500, e.message));
+      }
+    }
+  }
+
   initializeRoutes() {
     this.router.post(`${this.path}/register`, validate(validation.createUser), this.createUser);
+    this.router.post(`${this.path}/login`, validate(validation.login), this.login);
   }
 }
 

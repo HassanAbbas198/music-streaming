@@ -3,7 +3,7 @@ module.exports = {
     environment: process.env.NODE_ENV || '',
     logpath: process.env.LOG_PATH || '',
     name: process.env.APP_NAME || 'Music streaming',
-    port: parseInt(process.env.APP_PORT, 10) || 8000
+    port: +process.env.APP_PORT || 8000
   },
   application_logging: {
     console: process.env.LOG_ENABLE_CONSOLE !== 'false',
@@ -19,7 +19,7 @@ module.exports = {
   },
   jwt: {
     userSecret: process.env.JWT_SECRET,
-    tokenLifeTime: 60 * 60 * 100
+    tokenLifeTime: 60 * 60 * 24
   },
-  maxPasswordAttempt: 5
+  maxPasswordAttempts: 4
 };
