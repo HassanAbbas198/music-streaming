@@ -37,39 +37,50 @@ class Service {
   async login(body) {
     const { email, password } = body;
 
-    // validate user email and password
+    // check if the user exists
     const user = await User.findOne({ email });
-    if (user) {
-      const isCorrect = await bcrypt.compare(password, user.password);
-      if (!isCorrect) {
-        // increment the passwordAttempts by 1
-        await User.updateOne({ email }, {
-          $inc: {
-            passwordAttempts: 1
-          }
-        });
-        throw new Error('wrongCredentials');
-      }
-
-      // check if user is locked
-      if (user.locked) {
-        throw new Error('locked');
-      }
-
-      // reset the passwordAttempts upon successful login
+    if (!user) {
+      throw new Error('wrongCredentials');
+    }
+    // validate the user password
+    const isCorrect = await bcrypt.compare(password, user.password);
+    if (!isCorrect) {
+      // increment the passwordAttempts by 1
       await User.updateOne({ email }, {
-        $set: {
-          passwordAttempts: 0
+        $inc: {
+          passwordAttempts: 1
         }
       });
-
-      // return a json web token
-      const accessToken = await jwt.sign({ user }, config.jwt.userSecret, {
-        expiresIn: config.jwt.tokenLifeTime
-      });
-      return { accessToken };
+      throw new Error('wrongCredentials');
     }
-    throw new Error('wrongCredentials');
+
+    // check if user is locked
+    if (user.locked) {
+      throw new Error('locked');
+    }
+
+    // return a json web token
+    const token = await this.generateToken(user);
+
+    // reset the passwordAttempts upon a successful login & save the token
+    await User.updateOne({ email }, {
+      $set: {
+        passwordAttempts: 0,
+        token
+      }
+    });
+
+    return { token };
+  }
+
+  async generateToken(user) {
+    return jwt.sign(
+      { email: user.email },
+      config.jwt.userSecret,
+      {
+        expiresIn: config.jwt.tokenLifeTime
+      }
+    );
   }
 }
 

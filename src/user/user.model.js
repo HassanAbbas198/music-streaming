@@ -15,9 +15,10 @@ const userModel = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  token: String,
   dateOfBirth: Date,
   registrationDate: Date
 });
 
-userModel.index({ email: 1, password: 1 });
+userModel.index({ email: 1 });
 module.exports = mongoose.model('User', userModel);
