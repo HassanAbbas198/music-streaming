@@ -5,10 +5,12 @@ const logger = require('./lib/logger');
 const database = require('./lib/database');
 const HealthController = require('./health/health.controller');
 const HealthMonitor = require('./lib/health');
+const UserController = require('./user/user.controller');
 
 const app = new App(
   [
-    new HealthController(new HealthMonitor())
+    new HealthController(new HealthMonitor()),
+    new UserController()
   ]
 );
 

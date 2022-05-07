@@ -36,7 +36,7 @@ class MongoDB {
 
   static dataConnection(user, pass, host, port, name) {
     if (user && pass) {
-      return `mongodb://${`${user}:${pass}@`}${host}:${port}/${name}?authSource=admin`;
+      return `mongodb+srv://${`${user}:${pass}@`}${host}/${name}?authSource=admin`;
     }
     return `mongodb://${host}:${port}/${name}`;
   }
