@@ -56,6 +56,15 @@ class Controller {
     }
   }
 
+  async forgotPassword(req, res, next) {
+    try {
+      await userService.forgotPassword(req.body);
+      res.end();
+    } catch (e) {
+      next(new UserException(500, e.message));
+    }
+  }
+
   async resetPassword(req, res, next) {
     try {
       await userService.resetPassword(req.body);
@@ -73,6 +82,7 @@ class Controller {
     this.router.post(`${this.path}/register`, validate(validation.createUser), this.createUser);
     this.router.post(`${this.path}/login`, validate(validation.login), this.login);
     this.router.post(`${this.path}/verify`, validate(validation.verifyEmail), this.verifyEmail);
+    this.router.post(`${this.path}/forgotPassword`, validate(validation.forgotPassword), this.forgotPassword);
     this.router.post(`${this.path}/resetPassword`, validate(validation.resetPassword), this.resetPassword);
   }
 }

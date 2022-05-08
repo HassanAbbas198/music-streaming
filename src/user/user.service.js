@@ -118,10 +118,7 @@ class Service {
 
   async sendVerificationEmail(user) {
     // generate a random string as a token
-    const token = randomString.generate({
-      length: 40,
-      charset: 'alphabetic'
-    });
+    const token = await this.generateRandomString(40);
 
     // save the token so we can validate the user email
     const verificationToken = new UserVerification({
@@ -168,10 +165,7 @@ class Service {
 
   async sendResetPasswordEmail(user) {
     // generate a random string as a token
-    const token = randomString.generate({
-      length: 40,
-      charset: 'alphabetic'
-    });
+    const token = await this.generateRandomString(40);
 
     const expiryDate = moment().add(2, 'hours');
 
@@ -196,6 +190,48 @@ class Service {
                   Support team
                   `;
     return this.globalService.sendEmail(user.email, subject, body);
+  }
+
+  async forgotPassword(body) {
+    const { email } = body;
+
+    // check if the user with the email exists in our DB
+    const user = await User.findOne({ email: email.toLowerCase() });
+
+    // break out of the function if the email doesnt exist
+    if (!user) {
+      return true;
+    }
+
+    // generate a random string as a token
+    const token = await this.generateRandomString(40);
+
+    const expiryDate = moment().add(2, 'hours');
+
+    // save the reset password token
+    const resetPasswordToken = new UserResetPassword({
+      User: user._id,
+      token,
+      expiryDate
+    });
+    await resetPasswordToken.save();
+
+    const link = `${config.frontEnd.url}resetPassword/${token}`;
+
+    const subject = 'Reset Password';
+    const text = `
+                  Hi there,
+
+                  You requested a reset your password,
+                  Please click on this link: ${link} to reset your password
+
+                  if you didn't make a request, you can ignore this email and your password will remain the same.
+
+                  Regards,
+                  Support team
+                  `;
+
+    return this.globalService.sendEmail(user.email, subject, text);
   }
 
   async resetPassword(body) {
@@ -226,6 +262,13 @@ class Service {
 
     // delete the reset password token
     return UserResetPassword.deleteOne({ token });
+  }
+
+  async generateRandomString(length) {
+    return randomString.generate({
+      length,
+      charset: 'alphabetic'
+    });
   }
 }
 
