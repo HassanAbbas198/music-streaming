@@ -14,5 +14,9 @@ module.exports = {
   locked: {
     error: true,
     message: 'Your account has been locked'
+  },
+  invalidToken: {
+    error: true,
+    message: 'The verification token you provided is invalid'
   }
 };

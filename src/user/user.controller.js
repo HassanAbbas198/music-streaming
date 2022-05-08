@@ -43,9 +43,23 @@ class Controller {
     }
   }
 
+  async verifyEmail(req, res, next) {
+    try {
+      await userService.verifyEmail(req.body);
+      res.end();
+    } catch (e) {
+      if (e.message === 'invalidToken') {
+        next(new UserException(401, e.message));
+      } else {
+        next(new UserException(500, e.message));
+      }
+    }
+  }
+
   initializeRoutes() {
     this.router.post(`${this.path}/register`, validate(validation.createUser), this.createUser);
     this.router.post(`${this.path}/login`, validate(validation.login), this.login);
+    this.router.post(`${this.path}/verify`, validate(validation.verifyEmail), this.verifyEmail);
   }
 }
 

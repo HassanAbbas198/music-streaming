@@ -21,6 +21,12 @@ const validation = {
       email: Joi.string().required(),
       password: Joi.string().required()
     }
+  },
+  verifyEmail: {
+    options,
+    body: {
+      token: Joi.string().required()
+    }
   }
 };
 

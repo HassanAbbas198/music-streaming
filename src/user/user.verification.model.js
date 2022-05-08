@@ -5,8 +5,8 @@ const userVerification = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  verificationToken: String
+  token: String
 });
 
-userVerification.index({ verificationToken: 1 });
+userVerification.index({ token: 1 });
 module.exports = mongoose.model('UserVerification', userVerification);

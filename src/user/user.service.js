@@ -103,7 +103,7 @@ class Service {
     // save the token so we can validate the user email
     const verificationToken = new UserVerification({
       User: user._id,
-      verificationToken: token
+      token
     });
     await verificationToken.save();
 
@@ -121,6 +121,26 @@ class Service {
                   Support team
                   `;
     return this.globalService.sendEmail(user.email, subject, body);
+  }
+
+  async verifyEmail(body) {
+    const { token } = body;
+
+    // check if the token is valid
+    const userToken = await UserVerification.findOne({ token });
+    if (!userToken) {
+      throw new Error('invalidToken');
+    }
+
+    // set the emailVerified to true on the User
+    await User.updateOne({ _id: userToken.User }, {
+      $set: {
+        emailVerified: true
+      }
+    });
+
+    // delete the verification token
+    return UserVerification.deleteOne({ token });
   }
 }
 
