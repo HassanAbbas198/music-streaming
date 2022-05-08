@@ -14,12 +14,15 @@ class Service {
   }
 
   async createUser(body) {
+    let { email } = body;
     const {
-      email, password, confirmPassword, dateOfBirth
+      password, confirmPassword, dateOfBirth
     } = body;
 
+    email = email.toLowerCase();
+
     // check if user already signed up
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email });
     if (user) {
       throw new Error('userExists');
     }
@@ -33,7 +36,7 @@ class Service {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      email: email.toLowerCase(),
+      email,
       password: hashedPassword,
       dateOfBirth,
       registrationDate: new Date(),
@@ -47,10 +50,13 @@ class Service {
   }
 
   async login(body) {
-    const { email, password } = body;
+    let { email } = body;
+    const { password } = body;
+
+    email = email.toLowerCase();
 
     // check if the user exists
-    const user = await User.findOne({ email: email.toLowerCase() });
+    const user = await User.findOne({ email });
     if (!user) {
       throw new Error('wrongCredentials');
     }
@@ -67,7 +73,7 @@ class Service {
       const passwordAttempts = user.passwordAttempts + 1;
 
       if (passwordAttempts >= config.maxPasswordAttempts) {
-        await User.updateOne({ email: email.toLowerCase() }, {
+        await User.updateOne({ email }, {
           $set: {
             passwordAttempts,
             locked: true
@@ -77,7 +83,7 @@ class Service {
         await this.sendResetPasswordEmail(user);
         throw new Error('emailSent');
       }
-      await User.updateOne({ email: email.toLowerCase() }, {
+      await User.updateOne({ email }, {
         $set: {
           passwordAttempts
         }
