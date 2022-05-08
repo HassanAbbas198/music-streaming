@@ -1,8 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const randomString = require('randomstring');
+const moment = require('moment');
 const User = require('./user.model');
 const UserVerification = require('./user.verification.model');
+const UserResetPassword = require('./user.resetPassword.model');
 const config = require('../configs/config');
 const GlobalService = require('../utils/globalService');
 
@@ -52,6 +54,12 @@ class Service {
     if (!user) {
       throw new Error('wrongCredentials');
     }
+
+    // check if user is locked
+    if (user.locked) {
+      throw new Error('locked');
+    }
+
     // validate the user password
     const isCorrect = await bcrypt.compare(password, user.password);
     if (!isCorrect) {
@@ -65,24 +73,20 @@ class Service {
             locked: true
           }
         });
-        // send an email to the user to reset their passowrd
-        // todo
-      } else {
-        await User.updateOne({ email: email.toLowerCase() }, {
-          $set: {
-            passwordAttempts
-          }
-        });
+        // send an email to the user to reset their password
+        await this.sendResetPasswordEmail(user);
+        throw new Error('emailSent');
       }
+      await User.updateOne({ email: email.toLowerCase() }, {
+        $set: {
+          passwordAttempts
+        }
+      });
+
       throw new Error('wrongCredentials');
     }
 
-    // check if user is locked
-    if (user.locked) {
-      throw new Error('locked');
-    }
-
-    // return a json web token
+    // generate a json web token
     const token = await this.generateToken(user);
 
     // reset the passwordAttempts upon a successful login & save the token
@@ -154,6 +158,38 @@ class Service {
 
     // delete the verification token
     return UserVerification.deleteOne({ token });
+  }
+
+  async sendResetPasswordEmail(user) {
+    // generate a random string as a token
+    const token = randomString.generate({
+      length: 40,
+      charset: 'alphabetic'
+    });
+
+    const expiryDate = moment().add(2, 'hours');
+
+    // save the reset password token
+    const resetPasswordToken = new UserResetPassword({
+      User: user._id,
+      token,
+      expiryDate
+    });
+    await resetPasswordToken.save();
+
+    const link = `${config.frontEnd.url}resetPassword/${token}`;
+
+    const subject = 'Reset Password';
+    const body = `
+                  Hi there,
+
+                  Your account has been locked,
+                  Please click on this link: ${link} to reset your password
+
+                  Regards,
+                  Support team
+                  `;
+    return this.globalService.sendEmail(user.email, subject, body);
   }
 }
 

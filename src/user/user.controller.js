@@ -35,7 +35,7 @@ class Controller {
     } catch (e) {
       if (e.message === 'wrongCredentials') {
         next(new UserException(401, e.message));
-      } else if (e.message === 'locked') {
+      } else if (e.message === 'locked' || e.message === 'emailSent') {
         next(new UserException(403, e.message));
       } else {
         next(new UserException(500, e.message));
