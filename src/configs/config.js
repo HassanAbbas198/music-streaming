@@ -21,5 +21,11 @@ module.exports = {
     userSecret: process.env.JWT_SECRET,
     tokenLifeTime: 60 * 60 * 24
   },
+  mailgun: {
+    apiKey: process.env.MAILGUN_APIKEY
+  },
+  frontEnd: {
+    url: process.env.FRONTEND_URL
+  },
   maxPasswordAttempts: 4
 };

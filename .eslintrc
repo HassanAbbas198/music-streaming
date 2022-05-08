@@ -14,7 +14,7 @@
       "error",
       "never"
     ],
-    "no-underscore-dangle": "error",
+    "no-underscore-dangle": "off",
     "no-console": "error",
     "no-multi-spaces": "error",
     "class-methods-use-this": "off"

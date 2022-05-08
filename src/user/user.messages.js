@@ -13,6 +13,14 @@ module.exports = {
   },
   locked: {
     error: true,
-    message: 'Your account has been locked'
+    message: 'Your account is locked, please request a reset password to unlock it'
+  },
+  emailSent: {
+    error: true,
+    message: 'Your account has been locked, a reset password link has been sent to your email'
+  },
+  invalidToken: {
+    error: true,
+    message: 'The verification token you provided is invalid'
   }
 };

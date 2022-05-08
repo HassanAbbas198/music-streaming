@@ -35,8 +35,43 @@ class Controller {
     } catch (e) {
       if (e.message === 'wrongCredentials') {
         next(new UserException(401, e.message));
-      } else if (e.message === 'locked') {
+      } else if (e.message === 'locked' || e.message === 'emailSent') {
         next(new UserException(403, e.message));
+      } else {
+        next(new UserException(500, e.message));
+      }
+    }
+  }
+
+  async verifyEmail(req, res, next) {
+    try {
+      await userService.verifyEmail(req.body);
+      res.end();
+    } catch (e) {
+      if (e.message === 'invalidToken') {
+        next(new UserException(401, e.message));
+      } else {
+        next(new UserException(500, e.message));
+      }
+    }
+  }
+
+  async forgotPassword(req, res, next) {
+    try {
+      await userService.forgotPassword(req.body);
+      res.end();
+    } catch (e) {
+      next(new UserException(500, e.message));
+    }
+  }
+
+  async resetPassword(req, res, next) {
+    try {
+      await userService.resetPassword(req.body);
+      res.end();
+    } catch (e) {
+      if (e.message === 'invalidToken') {
+        next(new UserException(401, e.message));
       } else {
         next(new UserException(500, e.message));
       }
@@ -46,6 +81,9 @@ class Controller {
   initializeRoutes() {
     this.router.post(`${this.path}/register`, validate(validation.createUser), this.createUser);
     this.router.post(`${this.path}/login`, validate(validation.login), this.login);
+    this.router.post(`${this.path}/verify`, validate(validation.verifyEmail), this.verifyEmail);
+    this.router.post(`${this.path}/forgotPassword`, validate(validation.forgotPassword), this.forgotPassword);
+    this.router.post(`${this.path}/resetPassword`, validate(validation.resetPassword), this.resetPassword);
   }
 }
 
