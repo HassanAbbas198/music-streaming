@@ -48,19 +48,32 @@ class Service {
     const { email, password } = body;
 
     // check if the user exists
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) {
       throw new Error('wrongCredentials');
     }
     // validate the user password
     const isCorrect = await bcrypt.compare(password, user.password);
     if (!isCorrect) {
-      // increment the passwordAttempts by 1
-      await User.updateOne({ email }, {
-        $inc: {
-          passwordAttempts: 1
-        }
-      });
+      // increment the passwordAttempts by 1 & lock the user if they reached the max Password attempts
+      const passwordAttempts = user.passwordAttempts + 1;
+
+      if (passwordAttempts >= config.maxPasswordAttempts) {
+        await User.updateOne({ email: email.toLowerCase() }, {
+          $set: {
+            passwordAttempts,
+            locked: true
+          }
+        });
+        // send an email to the user to reset their passowrd
+        // todo
+      } else {
+        await User.updateOne({ email: email.toLowerCase() }, {
+          $set: {
+            passwordAttempts
+          }
+        });
+      }
       throw new Error('wrongCredentials');
     }
 
