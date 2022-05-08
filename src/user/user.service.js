@@ -13,7 +13,7 @@ class Service {
     this.globalService = new GlobalService();
   }
 
-  async createUser(body) {
+  async register(body) {
     let { email } = body;
     const {
       password, confirmPassword, dateOfBirth
@@ -59,6 +59,11 @@ class Service {
     const user = await User.findOne({ email });
     if (!user) {
       throw new Error('wrongCredentials');
+    }
+
+    // check if the email is not verified yet
+    if (!user.emailVerified) {
+      throw new Error('unverified');
     }
 
     // check if user is locked
@@ -264,10 +269,51 @@ class Service {
     return UserResetPassword.deleteOne({ token });
   }
 
-  async generateRandomString(length) {
+  async createUser(body) {
+    const email = body.email.toLowerCase();
+
+    // check if user exists
+    const user = await User.findOne({ email });
+    if (user) {
+      throw new Error('userExists');
+    }
+
+    // generate a random password
+    const password = await this.generateRandomString(12, 'alphanumeric');
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      registrationDate: new Date(),
+      emailVerified: true,
+      locked: false
+    });
+    await newUser.save();
+
+    const link = `${config.frontEnd.url}login`;
+    const subject = 'Login Credentials';
+    const text = `
+                  Hi there,
+
+                  Welcome to Music streaming,
+                  Start using the panel by following this link ${link}
+
+                  you can login with your email and this password: ${password} 
+
+                  Greetings,
+                  `;
+
+    return this.globalService.sendEmail(email, subject, text);
+  }
+
+  // generate a random string and set the alphabetic to a default charset
+  async generateRandomString(length, charset = 'alphabetic') {
     return randomString.generate({
       length,
-      charset: 'alphabetic'
+      charset
     });
   }
 }
