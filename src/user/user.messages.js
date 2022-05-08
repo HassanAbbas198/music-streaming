@@ -11,6 +11,10 @@ module.exports = {
     error: true,
     message: 'Wrong email or password'
   },
+  unverified: {
+    error: true,
+    message: 'Your account is not verified'
+  },
   locked: {
     error: true,
     message: 'Your account is locked, please request a reset password to unlock it'

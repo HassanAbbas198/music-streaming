@@ -15,7 +15,7 @@ class GlobalService {
   async sendEmail(email, subject, body) {
     try {
       const data = {
-        from: 'Music Streaming <postmaster@sandbox21ba1a9928ad448bbe511b9af0aab526.mailgun.org>',
+        from: 'Music Streaming <info@sandbox21ba1a9928ad448bbe511b9af0aab526.mailgun.org>',
         to: email,
         subject,
         text: body

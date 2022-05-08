@@ -6,7 +6,7 @@ const options = {
 };
 
 const validation = {
-  createUser: {
+  register: {
     options,
     body: {
       email: Joi.string().required(),
@@ -36,6 +36,12 @@ const validation = {
     }
   },
   forgotPassword: {
+    options,
+    body: {
+      email: Joi.string().required()
+    }
+  },
+  createUser: {
     options,
     body: {
       email: Joi.string().required()

@@ -3,6 +3,7 @@ const validate = require('express-validation');
 const validation = require('./user.validation');
 const UserException = require('./user.exception');
 const UserService = require('./user.service');
+const authenticate = require('../middleware/authenticate');
 
 const userService = new UserService();
 
@@ -13,9 +14,9 @@ class Controller {
     this.initializeRoutes();
   }
 
-  async createUser(req, res, next) {
+  async register(req, res, next) {
     try {
-      const result = await userService.createUser(req.body);
+      const result = await userService.register(req.body);
       res.send(result);
     } catch (e) {
       if (e.message === 'userExists') {
@@ -35,7 +36,7 @@ class Controller {
     } catch (e) {
       if (e.message === 'wrongCredentials') {
         next(new UserException(401, e.message));
-      } else if (e.message === 'locked' || e.message === 'emailSent') {
+      } else if (e.message === 'locked' || e.message === 'emailSent' || e.message === 'unverified') {
         next(new UserException(403, e.message));
       } else {
         next(new UserException(500, e.message));
@@ -78,12 +79,29 @@ class Controller {
     }
   }
 
+  async createUser(req, res, next) {
+    try {
+      const result = await userService.createUser(req.body);
+      res.send(result);
+    } catch (e) {
+      if (e.message === 'userExists') {
+        next(new UserException(409, e.message));
+      } else {
+        next(new UserException(500, e.message));
+      }
+    }
+  }
+
   initializeRoutes() {
-    this.router.post(`${this.path}/register`, validate(validation.createUser), this.createUser);
+    // public routes
+    this.router.post(`${this.path}/register`, validate(validation.register), this.register);
     this.router.post(`${this.path}/login`, validate(validation.login), this.login);
     this.router.post(`${this.path}/verify`, validate(validation.verifyEmail), this.verifyEmail);
     this.router.post(`${this.path}/forgotPassword`, validate(validation.forgotPassword), this.forgotPassword);
     this.router.post(`${this.path}/resetPassword`, validate(validation.resetPassword), this.resetPassword);
+    // authenticated routes
+    this.router.use(`${this.path}`, authenticate());
+    this.router.use(`${this.path}/create`, validate(validation.createUser), this.createUser);
   }
 }
 
