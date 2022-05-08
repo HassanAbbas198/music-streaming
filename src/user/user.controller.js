@@ -56,10 +56,24 @@ class Controller {
     }
   }
 
+  async resetPassword(req, res, next) {
+    try {
+      await userService.resetPassword(req.body);
+      res.end();
+    } catch (e) {
+      if (e.message === 'invalidToken') {
+        next(new UserException(401, e.message));
+      } else {
+        next(new UserException(500, e.message));
+      }
+    }
+  }
+
   initializeRoutes() {
     this.router.post(`${this.path}/register`, validate(validation.createUser), this.createUser);
     this.router.post(`${this.path}/login`, validate(validation.login), this.login);
     this.router.post(`${this.path}/verify`, validate(validation.verifyEmail), this.verifyEmail);
+    this.router.post(`${this.path}/resetPassword`, validate(validation.resetPassword), this.resetPassword);
   }
 }
 

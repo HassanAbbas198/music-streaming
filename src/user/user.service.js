@@ -191,6 +191,36 @@ class Service {
                   `;
     return this.globalService.sendEmail(user.email, subject, body);
   }
+
+  async resetPassword(body) {
+    const { token, password } = body;
+
+    const currentDate = new Date();
+
+    // check if the reset token is valid
+    const userToken = await UserResetPassword.findOne({ token });
+    if (!userToken || currentDate > userToken.expiryDate) {
+      throw new Error('invalidToken');
+    }
+
+    // hash the password
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password, salt);
+    // unlock the user and reset the passwordAttempts
+    await User.updateOne({ _id: userToken.User }, {
+      $set: {
+        password: hashedPassword,
+        locked: false,
+        passwordAttempts: 0
+      },
+      $unset: {
+        token: 1
+      }
+    });
+
+    // delete the reset password token
+    return UserResetPassword.deleteOne({ token });
+  }
 }
 
 module.exports = Service;

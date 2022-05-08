@@ -27,6 +27,13 @@ const validation = {
     body: {
       token: Joi.string().required()
     }
+  },
+  resetPassword: {
+    options,
+    body: {
+      token: Joi.string().required(),
+      password: Joi.string().required()
+    }
   }
 };
 
