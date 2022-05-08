@@ -24,5 +24,8 @@ module.exports = {
   mailgun: {
     apiKey: process.env.MAILGUN_APIKEY
   },
+  frontEnd: {
+    url: process.env.FRONTEND_URL
+  },
   maxPasswordAttempts: 4
 };

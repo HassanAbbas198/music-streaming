@@ -1,9 +1,16 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const randomString = require('randomstring');
 const User = require('./user.model');
+const UserVerification = require('./user.verification.model');
 const config = require('../configs/config');
+const GlobalService = require('../utils/globalService');
 
 class Service {
+  constructor() {
+    this.globalService = new GlobalService();
+  }
+
   async createUser(body) {
     const {
       email, password, confirmPassword, dateOfBirth
@@ -32,6 +39,9 @@ class Service {
       locked: false
     });
     await newUser.save();
+
+    // send verification email
+    return this.sendVerificationEmail(newUser);
   }
 
   async login(body) {
@@ -81,6 +91,36 @@ class Service {
         expiresIn: config.jwt.tokenLifeTime
       }
     );
+  }
+
+  async sendVerificationEmail(user) {
+    // generate a random string as a token
+    const token = randomString.generate({
+      length: 40,
+      charset: 'alphabetic'
+    });
+
+    // save the token so we can validate the user email
+    const verificationToken = new UserVerification({
+      User: user._id,
+      verificationToken: token
+    });
+    await verificationToken.save();
+
+    // this should be the redirection link to the frontend app with the token that will be sent in another API to verify the email
+    const link = `${config.frontEnd.url}verification/${token}`;
+
+    const subject = 'Account Verification';
+    const body = `
+                  Hi there,
+
+                  Thank you for signing up
+                  Please confirm you email address by clicking this link: ${link}
+
+                  Regards,
+                  Support team
+                  `;
+    return this.globalService.sendEmail(user.email, subject, body);
   }
 }
 
