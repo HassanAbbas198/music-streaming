@@ -4,8 +4,10 @@ const validation = require('./artists.validation');
 const ArtistsException = require('./artists.exception');
 const ArtistsService = require('./artists.service');
 const authenticate = require('../middleware/authenticate');
+const GlobalService = require('../utils/globalService');
 
 const artistsService = new ArtistsService();
+const globalService = new GlobalService();
 
 class Controller {
   constructor() {
@@ -17,7 +19,8 @@ class Controller {
   async createArtist(req, res, next) {
     try {
       const result = await artistsService.createArtist(req.body, req.user);
-      res.send(result);
+      res.locals.result = result;
+      next();
     } catch (e) {
       next(new ArtistsException(500, e.message));
     }
@@ -26,7 +29,8 @@ class Controller {
   async getAllArtists(req, res, next) {
     try {
       const result = await artistsService.getAllArtists();
-      res.send(result);
+      res.locals.result = result;
+      next();
     } catch (e) {
       next(new ArtistsException(500, e.message));
     }
@@ -35,7 +39,8 @@ class Controller {
   async getArtistDetails(req, res, next) {
     try {
       const result = await artistsService.getArtistDetails(req.params);
-      res.send(result);
+      res.locals.result = result;
+      next();
     } catch (e) {
       if (e.message === 'notFound') {
         next(new ArtistsException(404, e.message));
@@ -48,7 +53,7 @@ class Controller {
   async updateArtist(req, res, next) {
     try {
       await artistsService.updateArtist(req.body, req.params, req.user);
-      res.end();
+      next();
     } catch (e) {
       if (e.message === 'notFound') {
         next(new ArtistsException(404, e.message));
@@ -63,7 +68,7 @@ class Controller {
   async deleteArtist(req, res, next) {
     try {
       await artistsService.deleteArtist(req.params, req.user);
-      res.end();
+      next();
     } catch (e) {
       if (e.message === 'notFound') {
         next(new ArtistsException(404, e.message));
@@ -82,6 +87,7 @@ class Controller {
     this.router.get(`${this.path}`, this.getAllArtists);
     this.router.put(`${this.path}/:id`, validate(validation.updateArtist), this.updateArtist);
     this.router.delete(`${this.path}/:id`, validate(validation.getOrDeleteArtist), this.deleteArtist);
+    this.router.use(`${this.path}`, globalService.returnSuccess);
   }
 }
 

@@ -19,7 +19,8 @@ class Controller {
   async createTrack(req, res, next) {
     try {
       const result = await tracksService.createTrack(req.body, req.user);
-      res.send(result);
+      res.locals.result = result;
+      next();
     } catch (e) {
       next(new TracksException(500, e.message));
     }
