@@ -15,6 +15,12 @@ const validation = {
       cover: Joi.string().required()
     }
   },
+  getOrDeleteArtist: {
+    options,
+    params: {
+      id: Joi.objectID().required()
+    }
+  },
   updateArtist: {
     options,
     params: {

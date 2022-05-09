@@ -23,6 +23,28 @@ class Controller {
     }
   }
 
+  async getAllArtists(req, res, next) {
+    try {
+      const result = await artistsService.getAllArtists(req.query);
+      res.send(result);
+    } catch (e) {
+      next(new ArtistsException(500, e.message));
+    }
+  }
+
+  async getArtistDetails(req, res, next) {
+    try {
+      const result = await artistsService.getArtistDetails(req.params);
+      res.send(result);
+    } catch (e) {
+      if (e.message === 'notFound') {
+        next(new ArtistsException(404, e.message));
+      } else {
+        next(new ArtistsException(500, e.message));
+      }
+    }
+  }
+
   async updateArtist(req, res, next) {
     try {
       await artistsService.updateArtist(req.body, req.params, req.user);
@@ -39,6 +61,8 @@ class Controller {
   initializeRoutes() {
     this.router.use(`${this.path}`, authenticate());
     this.router.post(`${this.path}/`, validate(validation.createArtist), this.createArtist);
+    this.router.get(`${this.path}/:id`, validate(validation.getOrDeleteArtist), this.getArtistDetails);
+    this.router.get(`${this.path}`, this.getAllArtists);
     this.router.put(`${this.path}/:id`, validate(validation.updateArtist), this.updateArtist);
   }
 }
