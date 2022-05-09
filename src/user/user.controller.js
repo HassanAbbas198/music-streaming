@@ -92,6 +92,15 @@ class Controller {
     }
   }
 
+  async logout(req, res, next) {
+    try {
+      await userService.logout(req.user);
+      res.end();
+    } catch (e) {
+      next(new UserException(500, e.message));
+    }
+  }
+
   initializeRoutes() {
     // public routes
     this.router.post(`${this.path}/register`, validate(validation.register), this.register);
@@ -102,6 +111,7 @@ class Controller {
     // authenticated routes
     this.router.use(`${this.path}`, authenticate());
     this.router.use(`${this.path}/create`, validate(validation.createUser), this.createUser);
+    this.router.use(`${this.path}/logout`, this.logout);
   }
 }
 
