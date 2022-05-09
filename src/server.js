@@ -6,11 +6,13 @@ const database = require('./lib/database');
 const HealthController = require('./health/health.controller');
 const HealthMonitor = require('./lib/health');
 const UserController = require('./user/user.controller');
+const ArtistsController = require('./artists/artists.controller');
 
 const app = new App(
   [
     new HealthController(new HealthMonitor()),
-    new UserController()
+    new UserController(),
+    new ArtistsController()
   ]
 );
 
