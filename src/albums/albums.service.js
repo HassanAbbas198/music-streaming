@@ -45,6 +45,14 @@ class Service {
         }
       },
       {
+        $lookup: {
+          from: 'tracks',
+          localField: '_id',
+          foreignField: 'album',
+          as: 'tracks'
+        }
+      },
+      {
         $project: {
           _id: 0,
           id: '$_id',
@@ -52,7 +60,8 @@ class Service {
           cover: 1,
           clicks: 1,
           artist: '$artist.name',
-          createdDate: 1
+          createdDate: 1,
+          tracksCount: { $size: { $ifNull: ['$tracks', []] } }
         }
       },
       {

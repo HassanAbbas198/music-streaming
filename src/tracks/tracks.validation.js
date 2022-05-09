@@ -13,6 +13,7 @@ const validation = {
     body: {
       name: Joi.string().required(),
       cover: Joi.string().required(),
+      artist: Joi.objectID().required(),
       album: Joi.objectID().optional()
     }
   },
@@ -30,6 +31,7 @@ const validation = {
     body: {
       name: Joi.string().optional(),
       cover: Joi.string().optional(),
+      artist: Joi.objectID().optional(),
       album: Joi.objectID().optional()
     }
   }

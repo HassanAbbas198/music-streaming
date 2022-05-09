@@ -23,4 +23,6 @@ const albumModel = new mongoose.Schema({
   }
 });
 
+// adding index on the artist because we are queriying on it when getting all artists
+albumModel.index({ artist: 1 });
 module.exports = mongoose.model('Album', albumModel);
