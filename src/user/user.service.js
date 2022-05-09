@@ -316,6 +316,15 @@ class Service {
       charset
     });
   }
+
+  async logout(user) {
+    // unset the token of the user who is making the logout request
+    return User.updateOne({ _id: user._id }, {
+      $unset: {
+        token: 1
+      }
+    });
+  }
 }
 
 module.exports = Service;
