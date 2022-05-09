@@ -5,6 +5,6 @@ module.exports = {
   },
   forbidden: {
     error: true,
-    message: 'You can only update & delete the artist you created'
+    message: 'You can only update & delete the artists you created'
   }
 };

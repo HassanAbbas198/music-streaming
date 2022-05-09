@@ -2,10 +2,10 @@ const express = require('express');
 const validate = require('express-validation');
 const validation = require('./albums.validation');
 const AlbumsException = require('./albums.exception');
-const AlvumsService = require('./albums.service');
+const AlbumsService = require('./albums.service');
 const authenticate = require('../middleware/authenticate');
 
-const albumsService = new AlvumsService();
+const albumsService = new AlbumsService();
 
 class Controller {
   constructor() {
