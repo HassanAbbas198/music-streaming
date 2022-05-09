@@ -36,6 +36,22 @@ class Service {
           preserveNullAndEmptyArrays: true
         }
       },
+      {
+        $lookup: {
+          from: 'albums',
+          localField: '_id',
+          foreignField: 'artist',
+          as: 'albums'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tracks',
+          localField: '_id',
+          foreignField: 'artist',
+          as: 'tracks'
+        }
+      },
       // projecting the needed fields
       {
         $project: {
@@ -44,8 +60,16 @@ class Service {
           name: 1,
           cover: 1,
           clicks: 1,
+          createdDate: 1,
           updatedDate: 1,
-          updatedBy: '$user.email'
+          updatedBy: '$user.email',
+          tracksCount: { $size: { $ifNull: ['$tracks', []] } },
+          albumsCount: { $size: { $ifNull: ['$albums', []] } }
+        }
+      },
+      {
+        $sort: {
+          createdDate: -1
         }
       }
     ];

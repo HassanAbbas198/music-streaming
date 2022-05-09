@@ -8,12 +8,15 @@ class Service {
   }
 
   async createTrack(body, user) {
-    const { name, cover, album } = body;
+    const {
+      name, cover, album, artist
+    } = body;
 
     const track = new Track({
       name,
       cover,
-      Album: album,
+      album,
+      artist,
       createdDate: new Date(),
       createdBy: user._id
     });
@@ -33,7 +36,7 @@ class Service {
       {
         $lookup: {
           from: 'albums',
-          localField: 'Album',
+          localField: 'album',
           foreignField: '_id',
           as: 'album'
         }
@@ -45,13 +48,34 @@ class Service {
         }
       },
       {
+        $lookup: {
+          from: 'artists',
+          localField: 'artist',
+          foreignField: '_id',
+          as: 'artist'
+        }
+      },
+      {
+        $unwind: {
+          path: '$artist',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
         $project: {
           _id: 0,
           id: '$_id',
           name: 1,
           cover: 1,
           clicks: 1,
-          album: '$album.name'
+          album: '$album.name',
+          artist: '$artist.name',
+          createdDate: 1
+        }
+      },
+      {
+        $sort: {
+          createdDate: -1
         }
       }
     ];
