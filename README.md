@@ -11,7 +11,7 @@ The app was developed using Nodejs, ExpressJS and MongoDB.
 Clone the project
 
 ```bash
-  git clone https://link-to-project
+  git clone https://github.com/HassanAbbas198/music-streaming.git
 ```
 
 Go to the project directory
