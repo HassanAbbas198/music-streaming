@@ -25,7 +25,7 @@ class Controller {
 
   async getAllArtists(req, res, next) {
     try {
-      const result = await artistsService.getAllArtists(req.query);
+      const result = await artistsService.getAllArtists();
       res.send(result);
     } catch (e) {
       next(new ArtistsException(500, e.message));
@@ -52,7 +52,7 @@ class Controller {
     } catch (e) {
       if (e.message === 'notFound') {
         next(new ArtistsException(404, e.message));
-      } else if (e.message === 'frobidden') {
+      } else if (e.message === 'forbidden') {
         next(new ArtistsException(403, e.message));
       } else {
         next(new ArtistsException(500, e.message));
@@ -67,7 +67,7 @@ class Controller {
     } catch (e) {
       if (e.message === 'notFound') {
         next(new ArtistsException(404, e.message));
-      } else if (e.message === 'frobidden') {
+      } else if (e.message === 'forbidden') {
         next(new ArtistsException(403, e.message));
       } else {
         next(new ArtistsException(500, e.message));

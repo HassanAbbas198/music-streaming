@@ -1,8 +1,12 @@
 const mongoose = require('mongoose');
 
-const artistModel = new mongoose.Schema({
+const albumModel = new mongoose.Schema({
   name: String,
   cover: String,
+  artist: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Artist'
+  },
   clicks: {
     type: Number,
     default: 0
@@ -18,4 +22,6 @@ const artistModel = new mongoose.Schema({
     ref: 'User'
   }
 });
-module.exports = mongoose.model('Artist', artistModel);
+
+albumModel.index({ artist: 1 });
+module.exports = mongoose.model('Album', albumModel);

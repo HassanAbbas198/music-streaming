@@ -74,7 +74,7 @@ class Service {
 
     // resticting the users from deleting artists that weren't created by them
     if (user._id.toString() !== artist.createdBy.toString()) {
-      throw new Error('frobidden');
+      throw new Error('forbidden');
     }
 
     const updates = {
@@ -95,7 +95,7 @@ class Service {
       throw new Error('notFound');
     }
     if (user._id.toString() !== artist.createdBy.toString()) {
-      throw new Error('frobidden');
+      throw new Error('forbidden');
     }
     return Artist.deleteOne({ _id: id });
   }
