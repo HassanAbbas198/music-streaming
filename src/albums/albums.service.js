@@ -66,6 +66,12 @@ class Service {
     if (!albums || !albums.length) {
       throw new Error('notFound');
     }
+    // increment the number of clicks by 1
+    await Album.updateOne({ _id: id }, {
+      $inc: {
+        clicks: 1
+      }
+    });
     return albums[0];
   }
 

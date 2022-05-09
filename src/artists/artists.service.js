@@ -60,6 +60,12 @@ class Service {
     if (!artist) {
       throw new Error('notFound');
     }
+    // increment the number of clicks by 1
+    await Artist.updateOne({ _id: id }, {
+      $inc: {
+        clicks: 1
+      }
+    });
     return artist;
   }
 
