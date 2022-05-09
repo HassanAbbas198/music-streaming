@@ -5,12 +5,18 @@ const logger = require('./lib/logger');
 const database = require('./lib/database');
 const HealthController = require('./health/health.controller');
 const HealthMonitor = require('./lib/health');
-const UserController = require('./user/user.controller');
+const UsersController = require('./users/users.controller');
+const ArtistsController = require('./artists/artists.controller');
+const AlbumsController = require('./albums/albums.controller');
+const TracksController = require('./tracks/tracks.controller');
 
 const app = new App(
   [
     new HealthController(new HealthMonitor()),
-    new UserController()
+    new UsersController(),
+    new ArtistsController(),
+    new AlbumsController(),
+    new TracksController()
   ]
 );
 

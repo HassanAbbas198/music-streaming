@@ -1,11 +1,11 @@
 const express = require('express');
 const validate = require('express-validation');
-const validation = require('./user.validation');
-const UserException = require('./user.exception');
-const UserService = require('./user.service');
+const validation = require('./users.validation');
+const UsersException = require('./users.exception');
+const UsersService = require('./users.service');
 const authenticate = require('../middleware/authenticate');
 
-const userService = new UserService();
+const usersService = new UsersService();
 
 class Controller {
   constructor() {
@@ -16,79 +16,88 @@ class Controller {
 
   async register(req, res, next) {
     try {
-      const result = await userService.register(req.body);
+      const result = await usersService.register(req.body);
       res.send(result);
     } catch (e) {
       if (e.message === 'userExists') {
-        next(new UserException(409, e.message));
+        next(new UsersException(409, e.message));
       } else if (e.message === 'passwordsDontMatch') {
-        next(new UserException(400, e.message));
+        next(new UsersException(400, e.message));
       } else {
-        next(new UserException(500, e.message));
+        next(new UsersException(500, e.message));
       }
     }
   }
 
   async login(req, res, next) {
     try {
-      const result = await userService.login(req.body);
+      const result = await usersService.login(req.body);
       res.send(result);
     } catch (e) {
       if (e.message === 'wrongCredentials') {
-        next(new UserException(401, e.message));
+        next(new UsersException(401, e.message));
       } else if (e.message === 'locked' || e.message === 'emailSent' || e.message === 'unverified') {
-        next(new UserException(403, e.message));
+        next(new UsersException(403, e.message));
       } else {
-        next(new UserException(500, e.message));
+        next(new UsersException(500, e.message));
       }
     }
   }
 
   async verifyEmail(req, res, next) {
     try {
-      await userService.verifyEmail(req.body);
+      await usersService.verifyEmail(req.body);
       res.end();
     } catch (e) {
       if (e.message === 'invalidToken') {
-        next(new UserException(401, e.message));
+        next(new UsersException(401, e.message));
       } else {
-        next(new UserException(500, e.message));
+        next(new UsersException(500, e.message));
       }
     }
   }
 
   async forgotPassword(req, res, next) {
     try {
-      await userService.forgotPassword(req.body);
+      await usersService.forgotPassword(req.body);
       res.end();
     } catch (e) {
-      next(new UserException(500, e.message));
+      next(new UsersException(500, e.message));
     }
   }
 
   async resetPassword(req, res, next) {
     try {
-      await userService.resetPassword(req.body);
+      await usersService.resetPassword(req.body);
       res.end();
     } catch (e) {
       if (e.message === 'invalidToken') {
-        next(new UserException(401, e.message));
+        next(new UsersException(401, e.message));
       } else {
-        next(new UserException(500, e.message));
+        next(new UsersException(500, e.message));
       }
     }
   }
 
   async createUser(req, res, next) {
     try {
-      const result = await userService.createUser(req.body);
+      const result = await usersService.createUser(req.body);
       res.send(result);
     } catch (e) {
       if (e.message === 'userExists') {
-        next(new UserException(409, e.message));
+        next(new UsersException(409, e.message));
       } else {
-        next(new UserException(500, e.message));
+        next(new UsersException(500, e.message));
       }
+    }
+  }
+
+  async logout(req, res, next) {
+    try {
+      await usersService.logout(req.user);
+      res.end();
+    } catch (e) {
+      next(new UsersException(500, e.message));
     }
   }
 
@@ -102,6 +111,7 @@ class Controller {
     // authenticated routes
     this.router.use(`${this.path}`, authenticate());
     this.router.use(`${this.path}/create`, validate(validation.createUser), this.createUser);
+    this.router.use(`${this.path}/logout`, this.logout);
   }
 }
 

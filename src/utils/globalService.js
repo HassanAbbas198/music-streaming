@@ -25,6 +25,23 @@ class GlobalService {
       throw new Error(e);
     }
   }
+
+  // format the API response
+  async returnSuccess(req, res) {
+    try {
+      // return a json response with message success
+      const response = {
+        message: 'Success'
+      };
+      // check if we have a result attached on the res that needs to be returned
+      if (res.locals.result) {
+        response.result = res.locals.result;
+      }
+      res.send(response);
+    } catch (error) {
+      res.end();
+    }
+  }
 }
 
 module.exports = GlobalService;

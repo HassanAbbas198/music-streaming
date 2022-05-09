@@ -1,10 +1,10 @@
 const HttpException = require('../exceptions/httpException');
-const userErrorMessages = require('./user.messages');
+const errorMessages = require('./users.messages');
 
 class UserException extends HttpException {
   constructor(status, message) {
-    if (message && typeof (message) === 'string' && message in userErrorMessages) {
-      super(status, userErrorMessages[message]);
+    if (message && typeof (message) === 'string' && message in errorMessages) {
+      super(status, errorMessages[message]);
     } else {
       super(status, message);
     }
