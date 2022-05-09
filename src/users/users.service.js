@@ -2,9 +2,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const randomString = require('randomstring');
 const moment = require('moment');
-const User = require('./user.model');
-const UserVerification = require('./user.verification.model');
-const UserResetPassword = require('./user.resetPassword.model');
+const User = require('./users.model');
+const UserVerification = require('./users.verification.model');
+const UserResetPassword = require('./users.resetPassword.model');
 const config = require('../configs/config');
 const GlobalService = require('../utils/globalService');
 
