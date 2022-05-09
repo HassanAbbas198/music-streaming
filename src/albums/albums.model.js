@@ -23,5 +23,5 @@ const albumModel = new mongoose.Schema({
   }
 });
 
-albumModel.index({ name: 1 });
+albumModel.index({ artist: 1 });
 module.exports = mongoose.model('Album', albumModel);

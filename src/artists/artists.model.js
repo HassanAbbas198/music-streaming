@@ -18,6 +18,4 @@ const artistModel = new mongoose.Schema({
     ref: 'User'
   }
 });
-
-artistModel.index({ name: 1 });
 module.exports = mongoose.model('Artist', artistModel);
