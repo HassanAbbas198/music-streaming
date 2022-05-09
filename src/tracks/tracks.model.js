@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const trackModel = new mongoose.Schema({
   name: String,
   cover: String,
-  Album: {
+  album: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Album'
   },
