@@ -66,6 +66,12 @@ class Service {
     if (!tracks || !tracks.length) {
       throw new Error('notFound');
     }
+    // increment the number of clicks by 1
+    await Track.updateOne({ _id: id }, {
+      $inc: {
+        clicks: 1
+      }
+    });
     return tracks[0];
   }
 
