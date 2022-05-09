@@ -81,6 +81,16 @@ class Service {
       $set: updates
     });
   }
+
+  async deleteArtist(params) {
+    const { id } = params;
+
+    const artist = await Artist.findOne({ _id: id });
+    if (!artist) {
+      throw new Error('notFound');
+    }
+    return Artist.deleteOne({ _id: id });
+  }
 }
 
 module.exports = Service;
