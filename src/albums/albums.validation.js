@@ -29,7 +29,8 @@ const validation = {
     },
     body: {
       name: Joi.string().optional(),
-      cover: Joi.string().optional()
+      cover: Joi.string().optional(),
+      artist: Joi.objectID().optional()
     }
   }
 };
