@@ -7,12 +7,14 @@ const HealthController = require('./health/health.controller');
 const HealthMonitor = require('./lib/health');
 const UsersController = require('./users/users.controller');
 const ArtistsController = require('./artists/artists.controller');
+const AlbumsController = require('./albums/albums.controller');
 
 const app = new App(
   [
     new HealthController(new HealthMonitor()),
     new UsersController(),
-    new ArtistsController()
+    new ArtistsController(),
+    new AlbumsController()
   ]
 );
 

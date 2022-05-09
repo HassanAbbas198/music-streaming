@@ -3,7 +3,7 @@ module.exports = {
     error: true,
     message: 'Artist not found'
   },
-  frobidden: {
+  forbidden: {
     error: true,
     message: 'You can only update & delete the artist you created'
   }
