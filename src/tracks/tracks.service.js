@@ -51,7 +51,13 @@ class Service {
           name: 1,
           cover: 1,
           clicks: 1,
-          album: '$album.name'
+          album: '$album.name',
+          createdDate: 1
+        }
+      },
+      {
+        $sort: {
+          createdDate: -1
         }
       }
     ];

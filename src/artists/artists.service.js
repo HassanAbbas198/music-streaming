@@ -44,8 +44,14 @@ class Service {
           name: 1,
           cover: 1,
           clicks: 1,
+          createdDate: 1,
           updatedDate: 1,
           updatedBy: '$user.email'
+        }
+      },
+      {
+        $sort: {
+          createdDate: -1
         }
       }
     ];
