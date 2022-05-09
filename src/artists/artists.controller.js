@@ -52,6 +52,8 @@ class Controller {
     } catch (e) {
       if (e.message === 'notFound') {
         next(new ArtistsException(404, e.message));
+      } else if (e.message === 'frobidden') {
+        next(new ArtistsException(403, e.message));
       } else {
         next(new ArtistsException(500, e.message));
       }
@@ -60,11 +62,13 @@ class Controller {
 
   async deleteArtist(req, res, next) {
     try {
-      await artistsService.deleteArtist(req.params);
+      await artistsService.deleteArtist(req.params, req.user);
       res.end();
     } catch (e) {
       if (e.message === 'notFound') {
         next(new ArtistsException(404, e.message));
+      } else if (e.message === 'frobidden') {
+        next(new ArtistsException(403, e.message));
       } else {
         next(new ArtistsException(500, e.message));
       }

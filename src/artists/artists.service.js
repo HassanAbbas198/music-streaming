@@ -72,6 +72,11 @@ class Service {
       throw new Error('notFound');
     }
 
+    // resticting the users from deleting artists that weren't created by them
+    if (user._id.toString() !== artist.createdBy.toString()) {
+      throw new Error('frobidden');
+    }
+
     const updates = {
       ...body,
       updatedDate: new Date(),
@@ -82,12 +87,15 @@ class Service {
     });
   }
 
-  async deleteArtist(params) {
+  async deleteArtist(params, user) {
     const { id } = params;
 
     const artist = await Artist.findOne({ _id: id });
     if (!artist) {
       throw new Error('notFound');
+    }
+    if (user._id.toString() !== artist.createdBy.toString()) {
+      throw new Error('frobidden');
     }
     return Artist.deleteOne({ _id: id });
   }
