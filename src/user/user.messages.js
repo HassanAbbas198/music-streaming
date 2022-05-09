@@ -25,6 +25,6 @@ module.exports = {
   },
   invalidToken: {
     error: true,
-    message: 'The verification token you provided is invalid'
+    message: 'The token you provided is invalid'
   }
 };
