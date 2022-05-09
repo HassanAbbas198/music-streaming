@@ -5,6 +5,6 @@ module.exports = {
   },
   forbidden: {
     error: true,
-    message: 'You can only update & delete the album you created'
+    message: 'You can only update & delete the albums you created'
   }
 };
